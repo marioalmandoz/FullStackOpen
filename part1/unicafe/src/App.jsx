@@ -16,14 +16,29 @@ const Button = ({handleClick, text}) => (
   
 )
 
-const Statistics = (props) => {
+const Statistics = ({good, neutral, bad, all, average, positive}) => {
+  if(all === 0){
+    return (
+      <p> No feedback given </p>
+    )
+  }
+
   return (
     <div>
-      {props.text} {props.number} 
+      <StatisticsRow text='good' number={good} />
+      <StatisticsRow text='neutral' number={neutral} />
+      <StatisticsRow text='bad' number={bad} />
+      <StatisticsRow text='all' number={all} />
+      <StatisticsRow text='average' number={average} />
+      <StatisticsRow text='positive' number={positive + ' %'} />
     </div>
   )
 }
-  
+const StatisticsRow = ({ text, number }) => (
+  <div>
+    {text} {number}
+  </div>
+)
 
   
 
@@ -58,13 +73,17 @@ const App = () => {
         <Button handleClick = {handleNeutralClick} text = 'neutral' />
         <Button handleClick = {handleBadClick} text = 'bad' />
       </div>
+      
       <Header header = 'statistics'/>
-      <Statistics text = 'good' number = {good} />
-      <Statistics text = 'neutral' number = {neutral} />
-      <Statistics text = 'bad' number = {bad} />
-      <Statistics text = 'all' number = {all} />
-      <Statistics text = 'average' number = {average} />
-      <Statistics text = 'positive' number = {positive + ' %'} />
+      
+      <Statistics 
+      good = {good}
+      neutral = {neutral}
+      bad = {bad}
+      all = {all}
+      average = {average}
+      positive = {positive} 
+      />
     </div>
   )
 }

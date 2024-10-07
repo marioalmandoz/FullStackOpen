@@ -35,9 +35,14 @@ const Statistics = ({good, neutral, bad, all, average, positive}) => {
   )
 }
 const StatisticsRow = ({ text, number }) => (
-  <div>
-    {text} {number}
-  </div>
+  <table>
+    <tbody>
+      <tr>
+        <td>{text}</td>
+        <td>{number}</td>
+      </tr>
+    </tbody>
+  </table>
 )
 
   

@@ -1,8 +1,16 @@
 import { useState } from 'react'
 
+const Header = (props) => {
+  return(
+    <h1>
+      {props.header}
+    </h1>
+  )
+}
+
 const Button = (props) => {
   return (
-    <button onClick = {props.handleclick}>
+    <button onClick = {props.handleClick}>
       {props.text}
     </button>
 
@@ -22,18 +30,47 @@ const App = () => {
   ]
 
   const [selected, setSelected] = useState(0)
+  const [points, setPoints] = useState(Array(8).fill(0))
 
   const handleClick = () =>{
     const randomNumber = Math.floor(Math.random() * 8)
     setSelected(randomNumber)
   }
+
+  const handleVoteClick = () =>{
+    const copy =[...points] 
+    copy[selected] +=1
+    setPoints(copy)
+
+   
+  }
+  const maxValue = Math.max(...points)
+  const maxIndex = points.indexOf(maxValue)
+  
+
+
  console.log(selected)
   return (
     <div>
+      <Header header = 'Anecdote of the day' />
       <div>
         {anecdotes[selected]}
       </div>
-      <Button handleclick = {handleClick} text = 'next anecdote' />
+      <div>
+        has {points[selected]} votes
+      </div>
+
+      <Button handleClick = {handleVoteClick} text = 'vote' />
+      <Button handleClick = {handleClick} text = 'next anecdote' />
+      
+      <Header header = 'Anecdote with most votes' />
+      <div>
+        {anecdotes[maxIndex]}
+      </div>
+      <div>
+        has {points[maxIndex]} votes
+      </div>
+
 
     </div>
   )

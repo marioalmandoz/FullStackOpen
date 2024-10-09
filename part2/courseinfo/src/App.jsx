@@ -1,7 +1,8 @@
 
 const Course = (props) => {
   console.log("Course in")
-  const total = props.course.parts[0].exercises + props.course.parts[1].exercises + props.course.parts[2].exercises
+  //const total = props.course.parts[0].exercises + props.course.parts[1].exercises + props.course.parts[2].exercises
+  const total = props.course.parts.reduce((sum, part) => sum + part.exercises, 0);
   return (
     <div>
       <h1> {props.course.name} </h1>

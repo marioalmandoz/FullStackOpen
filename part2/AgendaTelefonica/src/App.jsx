@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import personService from './services/persons'
 
 const Filter = (props) => {
   return (
@@ -28,8 +29,10 @@ const PersonForm = (props) => {
 const Persons = (props) => {
   return (
     <div> 
-        {props.persons.map((person, index)=>(
-        <p key= {index}> {person.name} {person.number} </p>
+        {props.persons.map((person)=>(
+        <p key= {person.id}> {person.name} {person.number}  
+        <button  onClick={() => props.onDeletePerson(person.id, person.name)}>delete</button>
+        </p>
         ))}
     </div>
   )
@@ -46,11 +49,12 @@ const App = () => {
 
   const hook = () => {
     console.log('effect')
-    axios.get('http://localhost:3001/persons')
-    .then(response => {
-      console.log('promise fulfilled')
-      setPersons(response.data)
+
+    personService.getAll()
+    .then(allPersons => {
+      setPersons(allPersons)
     })
+    
   }
   useEffect(hook, [])
 
@@ -80,16 +84,26 @@ const App = () => {
     }else{
       const newPerson = {name : newName, number: newNumber};
       console.log(newName)
-      axios
-      .post('http://localhost:3001/persons', newPerson)
-      .then(response => {
-        setPersons(persons.concat(newPerson));
+      personService
+      .create(newPerson)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
         setNewName('');
         setNewNumber('')
-        console.log('Person added')
+        console.log('Person Added')
       })
+      
     }
   }
+  const handleDeletePerson = (id, name) => {
+    if (window.confirm(`Delete ${name}?`)) {
+      personService.deletePerson(id).then(() => {
+        // Actualizamos el estado eliminando la persona por su id
+        setPersons(persons.filter(person => person.id !== id));
+        console.log('Person deleted');
+      });
+    }
+  };
 
   const personsToShow = persons.filter(person => 
     person.name.toLowerCase().includes(newFilter.toLowerCase()))
@@ -105,7 +119,7 @@ const App = () => {
       number = {newNumber} onChangeNumber = {handleNumberChange}/> 
 
       <h2>Numbers</h2>
-      <Persons persons = {personsToShow}/>
+      <Persons onDeletePerson = {handleDeletePerson} persons = {personsToShow}/>
     </div>
   )
 }

@@ -39,13 +39,13 @@ const Persons = (props) => {
   )
 }
 
-const Notification = ({message}) => {
+const Notification = ({message, type}) => {
   if(!message){
     return null
   }
 
   return (
-    <div className= "error">
+    <div className= {type === 'error' ? 'error' : 'success'}>
       {message}
     </div>
   )
@@ -57,7 +57,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState({ message: '', type: '' })
+  
 
   
 
@@ -103,13 +104,23 @@ const App = () => {
           setPersons(persons.map(person => 
             person.id !== personExist.id ? person : returnedPerson
           ))
-        })
+
         setErrorMessage(
-          `Added '${returnedPerson.name}' `
+          { message: `Added '${returnedPerson.name}'`, type: 'success' }
         )
         setTimeout(() => {
           setErrorMessage(null)
         }, 5000)
+        })
+        .catch(error => {
+          setErrorMessage({ message: `Information of '${updatedPerson.name}' has already been removed from server`, type: 'error' });
+
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+        })
+
+        
         setNewName('')
         setNewNumber('')
       }
@@ -124,10 +135,15 @@ const App = () => {
         setNewName('');
         setNewNumber('')
         console.log('Person Added')
-
         setErrorMessage(
-          `Added '${returnedPerson.name}' `
+          { message: `Added '${returnedPerson.name}'`, type: 'success' }
         )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      }).catch(error => {
+        setErrorMessage({ message: `Information of '${updatedPerson.name}' has already been removed from server`, type: 'error' });
+
         setTimeout(() => {
           setErrorMessage(null)
         }, 5000)
@@ -151,7 +167,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message = {errorMessage} />
+      <Notification message = {errorMessage.message} type={errorMessage.type} />
       <Filter value = {newFilter} onChange={handleFilterChange}/>
       <h2> Add a new </h2>
       <PersonForm onSubmit={handleAddPerson} 

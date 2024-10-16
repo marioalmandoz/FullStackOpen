@@ -77,10 +77,23 @@ const App = () => {
     event.preventDefault()
     console.log('button clicked', event.target)
 
-    const nameExist = persons.some(person=> person.name === newName)
+    const personExist = persons.find(person=> person.name === newName)
 
-    if(nameExist){
-      alert(newName + ' is already added to the phonebook')
+    if(personExist){
+      if(window.confirm(newName + ' is already added to the phonebook, replace the old number with a new one?')) {
+        
+        const updatedPerson = { ...personExist, number: newNumber}
+
+        personService.update(personExist.id, updatedPerson)
+        .then(returnedPerson => {
+          setPersons(persons.map(person => 
+            person.id !== personExist.id ? person : returnedPerson
+          ))
+        })
+        setNewName('')
+        setNewNumber('')
+      }
+      
     }else{
       const newPerson = {name : newName, number: newNumber};
       console.log(newName)

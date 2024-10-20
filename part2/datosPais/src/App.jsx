@@ -19,6 +19,8 @@ const Response = (props) => {
 
 function App() {
   const [newFilter, setNewFilter] = useState('')
+  const [countries, setCountries] = useState([])
+
   const response = ''
 
   const handleFilterChange = (event) => {
@@ -26,14 +28,20 @@ function App() {
   }
   const url = 'https://studies.cs.helsinki.fi/restcountries/api/name'
 
-  const hook = () => {
-      console.log('effect')
-
-      axios.get(`${url}/${newFilter}`)
-      .then(response => response.data)
+  useEffect(() => {
+    if (newFilter === ''){
+      setCountries([])
+      return
     }
-     
-  useEffect(hook, [])
+
+    axios.get(`${url}/${newFilter}`)
+    .then(response => {
+      setCountries(response.data)
+    })
+    .catch(error => {
+      console.error('Error fetching date:', error)
+    })
+  },[newFilter])
 
   return (
     <div>

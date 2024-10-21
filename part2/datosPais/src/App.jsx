@@ -9,45 +9,68 @@ const Filter = (props) => {
   )
 }
 
-const Response = (props) => {
+const Response = ({country}) => {
+  console.log()
+  if (!country) {
+    return null
+  }
+
+  // Obtener los idiomas en formato de string
+  const languages = Object.values(country.languages)
+
   return (
     <div>
-      {props.response}
+      <h2>{country.name.common}</h2>
+      
+      <p>capital {country.capital[0]}</p>
+      <p>area {country.area} </p>
+      <h3>Languages:</h3>
+      <ul>
+        {languages.map((language, index) => (
+          <li key={index}>{language}</li>
+        ))}
+      </ul>
+      <img src={country.flags.png} alt={`Flag of ${country.name.common}`} width="150" />
     </div>
   )
+
+  
 }
 
 function App() {
-  const [newFilter, setNewFilter] = useState('')
-  const [countries, setCountries] = useState([])
 
-  const response = ''
+  const [newFilter, setNewFilter] = useState('')
+  const [country, setCountry] = useState(null)
+
 
   const handleFilterChange = (event) => {
     setNewFilter(event.target.value)
   }
-  const url = 'https://studies.cs.helsinki.fi/restcountries/api/name'
-
   useEffect(() => {
     if (newFilter === ''){
-      setCountries([])
+      setCountry(null)
       return
     }
 
-    axios.get(`${url}/${newFilter}`)
+    const url = `https://studies.cs.helsinki.fi/restcountries/api/name/${newFilter}`
+
+    console.log(url)
+    axios.get(url)
     .then(response => {
-      setCountries(response.data)
+      setCountry(response.data)
+      console.log(response.data)
     })
     .catch(error => {
       console.error('Error fetching date:', error)
+      setCountry(null)
     })
   },[newFilter])
 
   return (
     <div>
       <Filter value = {newFilter} onChange={handleFilterChange}/>
-
-      <Response response = {response}/>
+      
+      <Response country = {country}/>
     </div>
 
   )
